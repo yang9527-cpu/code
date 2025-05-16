@@ -249,4 +249,39 @@ mpirun -np 4 ./jacobi
 ```bash
 "I'm existing (%d), unordered print\n", rank
 ```
+![tu](PixPin_2025-05-16_10-40-39.png)  
+```c++
+#include <stdio.h>
+#include <string.h>
+#include "mpi.h"
 
+//example1 
+
+int main(int argc, char **argv)
+{
+    int rank, size;
+    MPI_Init(&argc, &argv);
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    if (rank == 0)
+    {
+        master_io(); // process 0 is the master process
+    }
+    else
+    {
+        slave_io(); // other prcess is the slave processes
+    }
+    MPI_Finalize();
+}
+```
+例子2：矩阵向量乘
+下面以矩阵向量乘（c = A b）为例，看看主从模式到底是如何进行的。
+
+具体的实现方法是：
+
+主进程将向量b广播给所有的从进程，然后将矩阵A的各行依次发送给从进程。
+从进程计算一行和b相乘的结果，然后将结果发送给主进程。
+主进程循环向各个从进程发送一行的数据，直到将A各行的数据发送完毕。
+一旦主进程将A的各行发送完毕，则每收到一个结果就向相应的从进程发送结束标志，从
+进程接收到结束标志后退出执行，主进程收集完所有的结果后也结束。
+![tu](PixPin_2025-05-16_10-55-35.png)
+编译运行同理example1
