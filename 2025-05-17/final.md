@@ -40,11 +40,9 @@ end do
 !$OMP SHARED(Nday, IdxDay, pver, tot_icld_vistau, liq_icld_vistau, ice_icld_vistau, tot_cld_vistau, cld) &
 !$OMP PRIVATE(i) SCHEDULE(STATIC)
 do i=1,Nday
-    integer :: col_idx
     col_idx = IdxDay(i) ! 获取实际的列索引
     tot_icld_vistau(col_idx,1:pver) = liq_icld_vistau(col_idx,1:pver) + ice_icld_vistau(col_idx,1:pver)
-    tot_cld_vistau(col_idx,1:pver) = (liq_icld_vistau(col_idx,1:pver) + &
-                                     ice_icld_vistau(col_idx,1:pver)) * cld(col_idx,1:pver)
+    tot_cld_vistau(col_idx,1:pver) = (liq_icld_vistau(col_idx,1:pver) + &ice_icld_vistau(col_idx,1:pver)) * cld(col_idx,1:pver)
 end do
 !$OMP END PARALLEL DO
 ```
